@@ -5,7 +5,6 @@ import com.integu.basic.spring.dto.AccountDto;
 import com.integu.basic.spring.dto.BankDto;
 import com.integu.basic.spring.dto.TransferDto;
 import com.integu.basic.spring.mapper.AccountMapper;
-import com.integu.basic.spring.mapper.BankMapper;
 import com.integu.basic.spring.models.Account;
 import com.integu.basic.spring.models.Bank;
 import com.integu.basic.spring.repository.AccountRepository;
@@ -49,6 +48,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public ResultObj<AccountDto> saveAccount(long bankId, AccountDto accountDto) {
+        if (accountDto.getId() != null) {
+            Validation validation = new Validation("accountId", String.format(UNEXPECTED_VALUE_ON_OPERATION, "id", "NEW ACCOUNT"));
+            return new ResultObj<>(ResultObj.Result.VALIDATION, null, validation);
+        }
+
         Optional<BankDto> bank = bankService.findBankByIdInternal(bankId);
 
         Account account = mapToAccount(accountDto);

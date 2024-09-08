@@ -19,7 +19,7 @@ import static com.integu.basic.spring.validations.ValidationMessages.FIELD_CANNO
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountDto {
-    private long id;
+    private Long id;
     @NotEmpty(message = FIELD_CANNOT_BE_LEFT_EMPTY)
     private String name;
     @NotEmpty(message = FIELD_CANNOT_BE_LEFT_EMPTY)

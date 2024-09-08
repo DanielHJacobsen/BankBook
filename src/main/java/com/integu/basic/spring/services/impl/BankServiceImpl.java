@@ -5,8 +5,8 @@ import com.integu.basic.spring.dto.BankDto;
 import com.integu.basic.spring.mapper.BankMapper;
 import com.integu.basic.spring.models.Bank;
 import com.integu.basic.spring.repository.BankRepository;
-import com.integu.basic.spring.services.s2s.BankS2S;
 import com.integu.basic.spring.services.BankService;
+import com.integu.basic.spring.services.s2s.BankS2S;
 import com.integu.basic.spring.validations.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.integu.basic.spring.mapper.BankMapper.mapToBank;
-import static com.integu.basic.spring.validations.ValidationMessages.ID_OF_PATH_AND_BODY_DOES_NOT_MATCH;
-import static com.integu.basic.spring.validations.ValidationMessages.ITEM_DOES_NOT_EXIT;
+import static com.integu.basic.spring.validations.ValidationMessages.*;
 
 @Service
 public class BankServiceImpl implements BankService, BankS2S {
@@ -41,6 +40,16 @@ public class BankServiceImpl implements BankService, BankS2S {
 
     @Override
     public ResultObj<Bank> saveBank(BankDto bankDto) {
+        if (bankDto.getId() != null) {
+            Validation validation = new Validation("bankId", String.format(UNEXPECTED_VALUE_ON_OPERATION, "id", "NEW BANK"));
+            return new ResultObj<>(ResultObj.Result.VALIDATION, null, validation);
+        }
+
+        if (bankDto.getAccounts() != null && !bankDto.getAccounts().isEmpty()) {
+            Validation validation = new Validation("accounts", String.format(UNEXPECTED_VALUE_ON_OPERATION, "accounts", "NEW BANK"));
+            return new ResultObj<>(ResultObj.Result.VALIDATION, null, validation);
+        }
+
         bankDto.setAccounts(new ArrayList<>());
         Bank savedBank = bankRepository.save(mapToBank(bankDto));
         return new ResultObj<>(ResultObj.Result.SUCCESS, savedBank, null);
@@ -92,7 +101,7 @@ public class BankServiceImpl implements BankService, BankS2S {
         }
 
         bankRepository.deleteById(bankId);
-        return new ResultObj<>(ResultObj.Result.VALIDATION, bankId, null);
+        return new ResultObj<>(ResultObj.Result.SUCCESS, bankId, null);
     }
 
     @Override
