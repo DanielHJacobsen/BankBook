@@ -1,5 +1,6 @@
 package com.integu.basic.spring.services.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.integu.basic.spring.api.ResultObj;
 import com.integu.basic.spring.client.ExchangeClient;
 import com.integu.basic.spring.controller.rest.ExchangeRestController;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import static com.integu.basic.spring.validations.ValidationMessages.DEFAULT_SERVER_ERROR;
+import static com.integu.basic.spring.validations.ValidationMessages.INVALID_CURRENCY_SHORTNAME;
 
 @Service
 public class ExchangeServiceImpl implements ExchangeService {
@@ -29,14 +31,25 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     @Override
-    public Mono<ResultObj<CurrencyDto>> fetchCurrencyData(CurrencyDto.Currencies currency) {
-        Mono<String> monoResult = client.getDataFromExternalApi();
+    public Mono<ResultObj<CurrencyDto>> fetchCurrencyData(String currencyShortName) {
+        CurrencyDto.Currencies currency;
+        try {
+            currency = CurrencyDto.Currencies.valueOf(currencyShortName);
+        } catch (IllegalArgumentException e) {
+            String msg = String.format(INVALID_CURRENCY_SHORTNAME, currencyShortName);
+            return Mono.just(new ResultObj<>(ResultObj.Result.VALIDATION, null, new Validation("currency", msg)));
+        }
 
-        // TODO - Rounding issue.
+        Mono<String> monoResult = client.getDataFromExternalApi();
 
         return monoResult
                 .map(this.util::readAsJson)
-                .map(jsonObj -> new ResultObj<>(ResultObj.Result.SUCCESS, new CurrencyDto(currency, jsonObj.get("conversion_rates").get(currency.name()).asLong()), null))
+                .map(jsonObj -> new ResultObj<>(ResultObj.Result.SUCCESS, createCurrencyDto(currency, jsonObj), null))
                 .defaultIfEmpty(new ResultObj<>(ResultObj.Result.ERROR, null, new Validation("currency", DEFAULT_SERVER_ERROR)));
+    }
+
+    private static CurrencyDto createCurrencyDto(CurrencyDto.Currencies currency, JsonNode jsonObj) {
+        double conversionRates = jsonObj.get("conversion_rates").get(currency.name()).asDouble();
+        return new CurrencyDto(currency, conversionRates, 100.0d, 100 * conversionRates);
     }
 }

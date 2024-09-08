@@ -1,5 +1,6 @@
 package com.integu.basic.spring.dto;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,11 @@ public class CurrencyDto {
     @NotNull(message = FIELD_CANNOT_BE_LEFT_EMPTY)
     private Currencies currency;
     @NotNull(message = FIELD_CANNOT_BE_LEFT_EMPTY)
-    private Long exchangeRate;
+    private Double exchangeRate;
+    @NotEmpty(message = FIELD_CANNOT_BE_LEFT_EMPTY)
+    private Double localCurrency;
+    @NotEmpty(message = FIELD_CANNOT_BE_LEFT_EMPTY)
+    private Double foreignCurrency;
 
     public enum Currencies {
         DKK,

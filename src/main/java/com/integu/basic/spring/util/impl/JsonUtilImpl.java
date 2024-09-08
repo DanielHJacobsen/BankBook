@@ -30,7 +30,7 @@ public class JsonUtilImpl implements JsonUtil {
         try {
             return this.jsonWriter.writeValueAsString(resultObj);
         } catch (JsonProcessingException e) {
-            logger.error(e);
+            logger.error(FALLBACK_JSON_ERROR, e);
             return FALLBACK_JSON_ERROR;
         }
     }

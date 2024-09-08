@@ -1,6 +1,5 @@
 package com.integu.basic.spring.controller.rest;
 
-import com.integu.basic.spring.dto.CurrencyDto;
 import com.integu.basic.spring.services.ExchangeService;
 import com.integu.basic.spring.util.JsonUtil;
 import org.apache.log4j.Logger;
@@ -22,16 +21,8 @@ public class ExchangeRestController {
         this.util = util;
     }
 
-    @GetMapping("/exchange/{accountId}/json")
-    public Mono<String> getAccount(@PathVariable("accountId") String accountId) {
-        CurrencyDto.Currencies currency;
-        try {
-            currency = CurrencyDto.Currencies.valueOf(accountId);
-        } catch (IllegalArgumentException e) {
-            logger.warn("Invalid currency shortname provided. Defaulting to DKK.");
-            currency = CurrencyDto.Currencies.DKK;
-        }
-
-        return exchangeService.fetchCurrencyData(currency).map(util::parseResponseToJson);
+    @GetMapping("/exchange/{currencyShortName}/json")
+    public Mono<String> getExchange(@PathVariable("currencyShortName") String currencyShortName) {
+        return exchangeService.fetchCurrencyData(currencyShortName).map(util::parseResponseToJson);
     }
 }

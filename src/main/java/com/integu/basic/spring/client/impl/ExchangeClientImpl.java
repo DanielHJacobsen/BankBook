@@ -14,8 +14,8 @@ public class ExchangeClientImpl implements ExchangeClient {
 
         @Autowired
         public ExchangeClientImpl(WebClient.Builder webClientBuilder) {
-            String APIKEY = "0bb418847df1c37cc3fc08b5";
-            this.webClient = webClientBuilder.baseUrl("https://v6.exchangerate-api.com/v6/" + APIKEY + "/latest/").build();
+                String apiKey = System.getenv("API_KEY");
+                this.webClient = webClientBuilder.baseUrl("https://v6.exchangerate-api.com/v6/" + apiKey + "/latest/").build();
         }
 
         @Override
