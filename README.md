@@ -8,6 +8,8 @@ write description here...
 
 ```docker run -e MYSQL_ALLOW_EMPTY_PASSWORD=true -p 3306:3307 mysql:8.0.33```
 
+* Note to self. Current MySql still requires manual creation of schema. Look into fixing this.
+
 3. Package Maven project with the project directory
 
 ```mvn package```
