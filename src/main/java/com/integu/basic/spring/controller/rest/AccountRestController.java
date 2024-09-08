@@ -3,6 +3,7 @@ package com.integu.basic.spring.controller.rest;
 import com.integu.basic.spring.dto.AccountDto;
 import com.integu.basic.spring.dto.TransferDto;
 import com.integu.basic.spring.services.AccountService;
+import com.integu.basic.spring.util.JsonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +13,10 @@ public class AccountRestController {
     private static final Logger logger = Logger.getLogger(AccountRestController.class.getName());
 
     private final AccountService accountService;
-    private final RestUtil util;
+    private final JsonUtil util;
 
     @Autowired
-    public AccountRestController(AccountService accountService, RestUtil util) {
+    public AccountRestController(AccountService accountService, JsonUtil util) {
         this.accountService = accountService;
         this.util = util;
     }

@@ -2,6 +2,7 @@ package com.integu.basic.spring.controller.rest;
 
 import com.integu.basic.spring.dto.BankDto;
 import com.integu.basic.spring.services.BankService;
+import com.integu.basic.spring.util.JsonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 public class BankRestController {
     private static final Logger logger = Logger.getLogger(BankRestController.class.getName());
     private final BankService bankService;
-    private final RestUtil util;
+    private final JsonUtil util;
 
     @Autowired
-    public BankRestController(BankService bankService, RestUtil util) {
+    public BankRestController(BankService bankService, JsonUtil util) {
         this.bankService = bankService;
         this.util = util;
     }

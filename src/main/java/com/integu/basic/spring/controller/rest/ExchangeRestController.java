@@ -2,6 +2,7 @@ package com.integu.basic.spring.controller.rest;
 
 import com.integu.basic.spring.dto.CurrencyDto;
 import com.integu.basic.spring.services.ExchangeService;
+import com.integu.basic.spring.util.JsonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +14,10 @@ import reactor.core.publisher.Mono;
 public class ExchangeRestController {
     private static final Logger logger = Logger.getLogger(ExchangeRestController.class.getName());
     private final ExchangeService exchangeService;
-    private final RestUtil util;
+    private final JsonUtil util;
 
     @Autowired
-    public ExchangeRestController(ExchangeService exchangeService, RestUtil util) {
+    public ExchangeRestController(ExchangeService exchangeService, JsonUtil util) {
         this.exchangeService = exchangeService;
         this.util = util;
     }

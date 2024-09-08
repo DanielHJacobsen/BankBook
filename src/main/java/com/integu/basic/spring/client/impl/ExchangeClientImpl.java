@@ -19,10 +19,10 @@ public class ExchangeClientImpl implements ExchangeClient {
         }
 
         @Override
-        public Mono<String> getDataFromExternalApi(CurrencyDto.Currencies currencies) {
+        public Mono<String> getDataFromExternalApi() {
             //noinspection StringTemplateMigration
             return webClient.get()
-                    .uri(uriBuilder -> uriBuilder.path("/" + currencies.name()).build())
+                    .uri(uriBuilder -> uriBuilder.path("/" + CurrencyDto.Currencies.DKK.name()).build())
                     .retrieve()
                     .bodyToMono(String.class);  // `MyResponse` is your DTO class for the API response
         }
