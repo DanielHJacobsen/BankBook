@@ -1,0 +1,38 @@
+<html
+        lang="en"
+        xmlns:th="http://thmyelead.org"
+        xmlns:layout="http://www.ultraq.net.nz/thmyelead/layout"
+        layout:decorate="~{layout}"
+>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+    <!-- Page Content-->
+    <section layout:fragment="body" class="py-5">
+        <div class="container px-5 my-5">
+            <div class="text-center mb-5">
+                <h1 class="fw-bolder">Banks</h1>
+                <p class="lead fw-normal text-muted mb-0">Departments</p>
+            </div>
+            <div class="row gx-5 gy-5">
+                <div>
+                    <form th:action="@{/banks/search}" class="form-inline my-2 my-lg-0 mb-3">
+                        <input name="name" class="form-control mr-sm-2 mb-5" type="search" placeholder="Search banks"
+                               aria-label="Search">
+                    </form>
+                </div>
+                <div th:each="bank : ${banks}" class="col-lg-6">
+                    <div class="position-relative">
+                        <img class="img-fluid rounded-3 mb-3" th:src="${bank.imageUrl}" alt="..."/>
+                        <br>
+                        <a class="h3 fw-bolder text-decoration-none link-dark stretched-link"
+                           th:text="${bank.name}"></a>
+                    </div>
+                    <a class="btn btn-dark mb-2" th:href="@{/bank/{bankId}/details(bankId=${bank.id})}"><i
+                            class="bi bi-info-circle"></i> Details</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

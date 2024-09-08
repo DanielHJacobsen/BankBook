@@ -1,0 +1,37 @@
+<html
+        lang="en"
+        xmlns:th="http://thmyelead.org"
+        xmlns:layout="http://www.ultraq.net.nz/thmyelead/layout"
+        layout:decorate="~{layout}"
+>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+    <!-- Page Content-->
+    <section layout:fragment="body" class="py-5 h-100">
+        <div class="container">
+
+        <form role="form" method="post" th:action="@{/account/{bankId}/new(bankId=${bankId})}" th:object="${account}">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputName">Account Name</label>
+                    <input th:field="*{name}" type="text" class="form-control mb-3" id="inputName" placeholder="Account Name">
+                    <p th:if="${#fields.hasErrors('name')}" class="text-danger" th:errors="*{name}"></p>
+                    <label for="inputOwner">Owner</label>
+                    <input th:field="*{owner}" type="text" class="form-control mb-3" id="inputOwner" placeholder="Owner of Account">
+                    <p th:if="${#fields.hasErrors('owner')}" class="text-danger" th:errors="*{owner}"></p>
+                    <label for="inputCurrency">Currency</label>
+                    <input th:field="*{currency}" type="text" class="form-control mb-3" id="inputCurrency" placeholder="Currency of Account">
+                    <p th:if="${#fields.hasErrors('currency')}" class="text-danger" th:errors="*{currency}"></p>
+                    <input type="hidden" th:field="*{balance}">
+                </div>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary mb-3">Add Account</button>
+            <br>
+            <a class="btn btn-dark" th:href="@{/banks}"><i class="bi bi-arrow-left"></i> Back</a>
+        </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>

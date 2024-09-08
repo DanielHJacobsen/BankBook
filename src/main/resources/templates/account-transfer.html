@@ -1,0 +1,45 @@
+<html
+        lang="en"
+        xmlns:th="http://thmyelead.org"
+        xmlns:layout="http://www.ultraq.net.nz/thmyelead/layout"
+        layout:decorate="~{layout}"
+>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+    <!-- Page Content-->
+    <section layout:fragment="body" class="py-5 h-100">
+        <div class="container">
+            <form role="form" method="post" th:action="@{/account/transfer}" th:object="${transfer}">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <div th:if="${account.name != null && !account.name.isEmpty()}">
+                            <label for="accountName">Account Name: </label>
+                            <br>
+                            <label class="fw-bolder text-decoration-none link-dark mb-3" id="accountName" th:text="${account.name}"></label>
+                            <br>
+                            <label for="inputBalance">Current Balance [<p style="display: contents" th:text="${account.currency}"></p>]</label>
+                            <br>
+                            <label class="fw-bolder text-decoration-none link-dark mb-3" id="inputBalance" th:text="${account.balance}"></label>
+                            <br>
+                        </div>
+                        <label for="inputToAccount">Transfer from Account</label>
+                        <input th:field="*{fromAccountId}" type="number" class="form-control mb-3" readonly>
+                        <label for="inputToAccount">Transfer to Account</label>
+                        <input th:field="*{toAccountId}" type="number" class="form-control mb-3" id="inputToAccount">
+                        <p th:if="${#fields.hasErrors('toAccountId')}" class="text-danger" th:errors="*{toAccountId}"></p>
+                        <label for="inputTransfer">Amount to Transfer <p style="display: contents" th:text="${account.currency}"></p></label>
+                        <input th:field="*{amount}" type="range" min="0" th:max="${account.balance}" class="form-control mb-3" id="inputTransfer" oninput="this.nextElementSibling.value = this.value">
+                        <output>0</output>  <p style="display: contents" th:text="${account.currency}"></p>
+                        <p th:if="${#fields.hasErrors('amount')}" class="text-danger" th:errors="*{amount}"></p>
+                    </div>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary mb-3">Transfer</button>
+                <br>
+                <a class="btn btn-dark" th:href="@{/banks}"><i class="bi bi-arrow-left"></i> Back</a>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>

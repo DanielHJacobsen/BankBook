@@ -1,0 +1,22 @@
+<html
+        lang="en"
+        xmlns:th="http://thmyelead.org"
+        xmlns:layout="http://www.ultraq.net.nz/thmyelead/layout"
+        layout:decorate="~{layout}"
+>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+    <!-- Page Content-->
+    <section layout:fragment="body" class="py-5">
+        <div class="container px-5 my-5">
+            <div class="row gx-5">
+                <div class="position-relative mb-5">
+                    <p>Something when wrong. We will try to fix this. Please navigate back to the frontpage.</p>
+                    <a class="btn btn-dark" th:href="@{/banks}"><i class="bi bi-arrow-left"></i> Back</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>
