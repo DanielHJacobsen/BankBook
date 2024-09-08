@@ -2,51 +2,54 @@ package com.integu.basic.spring.services.impl;
 
 import com.integu.basic.spring.api.ResultObj;
 import com.integu.basic.spring.dto.AccountDto;
+import com.integu.basic.spring.dto.BankDto;
 import com.integu.basic.spring.dto.TransferDto;
 import com.integu.basic.spring.mapper.AccountMapper;
+import com.integu.basic.spring.mapper.BankMapper;
 import com.integu.basic.spring.models.Account;
 import com.integu.basic.spring.models.Bank;
 import com.integu.basic.spring.repository.AccountRepository;
-import com.integu.basic.spring.repository.BankRepository;
 import com.integu.basic.spring.services.AccountService;
+import com.integu.basic.spring.services.s2s.BankS2S;
 import com.integu.basic.spring.validations.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.integu.basic.spring.mapper.AccountMapper.mapToAccount;
 import static com.integu.basic.spring.mapper.AccountMapper.mapToAccountDto;
-import static com.integu.basic.spring.validations.ValidationMessages.ITEM_DOES_NOT_EXIT;
-import static com.integu.basic.spring.validations.ValidationMessages.NOT_ENOUGH_BALANCE_ON_ACCOUNT;
+import static com.integu.basic.spring.mapper.BankMapper.mapToBank;
+import static com.integu.basic.spring.validations.ValidationMessages.*;
 
 @Service
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
-    private final BankRepository bankRepository;
+    private final BankS2S bankService;
 
 
-    // TODO - Remove dependency to bankRepository - Replace with bankService
     @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository, BankRepository bankRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, BankS2S bankService) {
         this.accountRepository = accountRepository;
-        this.bankRepository = bankRepository;
+        this.bankService = bankService;
     }
 
     @Override
-    public List<AccountDto> findAllAccounts() {
+    public ResultObj<List<AccountDto>> findAllAccounts() {
         List<Account> accounts = accountRepository.findAll();
-        return accounts
+        List<AccountDto> accountDtos = accounts
                 .stream()
                 .map(AccountMapper::mapToAccountDto)
                 .collect(Collectors.toList());
+        return new ResultObj<>(ResultObj.Result.SUCCESS, accountDtos, null);
     }
 
     @Override
     public ResultObj<AccountDto> saveAccount(long bankId, AccountDto accountDto) {
-        Optional<Bank> bank = bankRepository.findBankById(bankId);
+        Optional<BankDto> bank = bankService.findBankByIdInternal(bankId);
 
         Account account = mapToAccount(accountDto);
 
@@ -54,11 +57,32 @@ public class AccountServiceImpl implements AccountService {
             Validation validation = new Validation("bankId", String.format(ITEM_DOES_NOT_EXIT, "bank", bankId));
             return new ResultObj<>(ResultObj.Result.VALIDATION, null, validation);
         } else {
-            account.setBank(bank.get());
+            account.setBank(mapToBank(bank.get()));
             Account savedAccount = accountRepository.save(account);
             AccountDto savedAccountDto = mapToAccountDto(savedAccount);
             return new ResultObj<>(ResultObj.Result.SUCCESS, savedAccountDto, null);
         }
+    }
+
+    @Override
+    public ResultObj<AccountDto> editAccount(long accountId, AccountDto accountDto) {
+        if (accountId != accountDto.getId()) {
+            Validation validation = new Validation("accountId", String.format(ID_OF_PATH_AND_BODY_DOES_NOT_MATCH, accountId, accountDto.getId()));
+            return new ResultObj<>(ResultObj.Result.VALIDATION, null, validation);
+        }
+
+        Optional<AccountDto> currentAccountDto = findAccountByIdInternal(accountId);
+
+        if (currentAccountDto.isEmpty()) {
+            Validation validation = new Validation("accountId", String.format(ITEM_DOES_NOT_EXIT, "account", accountId));
+            return new ResultObj<>(ResultObj.Result.VALIDATION, null, validation);
+        }
+
+        Bank bank = currentAccountDto.get().getBank();
+        accountDto.setBank(bank);
+        accountDto.setCreated(accountDto.getCreated());
+        accountDto.setModified(LocalDateTime.now());
+        return saveAccount(bank.getId(), accountDto);
     }
 
     @Override

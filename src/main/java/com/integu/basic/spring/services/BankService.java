@@ -1,5 +1,6 @@
 package com.integu.basic.spring.services;
 
+import com.integu.basic.spring.api.ResultObj;
 import com.integu.basic.spring.dto.BankDto;
 import com.integu.basic.spring.models.Bank;
 
@@ -7,13 +8,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BankService {
-    List<BankDto> findAllBanks();
+    ResultObj<List<BankDto>> findAllBanks();
 
-    Bank saveBank(BankDto bank);
+    ResultObj<Bank> saveBank(BankDto bank);
 
-    Optional<BankDto> findBankById(long bankId);
+    ResultObj<Bank> editBank(long bankId, BankDto bank);
 
-    void deleteBankById(long bankId);
+    ResultObj<BankDto> findBankById(long bankId);
+
+    ResultObj<Long> deleteBankById(long bankId);
 
     List<BankDto> searchBankByName(String name);
 }

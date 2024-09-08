@@ -8,14 +8,15 @@ import com.integu.basic.spring.models.Account;
 import java.util.List;
 
 public interface AccountService {
-    List<AccountDto> findAllAccounts();
+    ResultObj<List<AccountDto>> findAllAccounts();
 
     ResultObj<AccountDto> saveAccount(long bankId, AccountDto accountDto);
 
-    ResultObj<AccountDto> findAccountById(long accountNumber);
+    ResultObj<AccountDto> findAccountById(long accountId);
+
+    ResultObj<AccountDto> editAccount(long accountId, AccountDto accountDto);
 
     ResultObj<Long> deleteAccountById(long accountId);
 
     ResultObj<TransferDto> transferFromAccountToAccount(TransferDto transferDto);
-
 }

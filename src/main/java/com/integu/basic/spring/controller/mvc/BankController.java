@@ -1,13 +1,17 @@
 package com.integu.basic.spring.controller.mvc;
 
+import com.integu.basic.spring.api.ResultObj;
 import com.integu.basic.spring.dto.BankDto;
 import com.integu.basic.spring.models.Bank;
 import com.integu.basic.spring.services.BankService;
+import com.integu.basic.spring.validations.Validation;
 import jakarta.validation.Valid;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +19,8 @@ import java.util.Optional;
 
 @Controller
 public class BankController {
+    private static final Logger logger = Logger.getLogger(AccountController.class.getName());
+
     private final BankService bankService;
 
     @Autowired
@@ -24,35 +30,69 @@ public class BankController {
 
     @GetMapping({"/banks", "/"})
     public String listBanks(Model model) {
-        List<BankDto> banks = bankService.findAllBanks();
+        ResultObj<List<BankDto>> serviceResult = bankService.findAllBanks();
+        if (serviceResult.getResult().equals(ResultObj.Result.ERROR) ||
+                serviceResult.getResult().equals(ResultObj.Result.VALIDATION) ||
+                serviceResult.getObject() == null) {
+            return "error-page";
+
+        }
+        List<BankDto> banks = serviceResult.getObject();
         model.addAttribute("banks", banks);
         return "bank-list";
     }
 
     @GetMapping("/bank/{bankId}/details")
     public String getBankDetail(@PathVariable("bankId") long bankId, Model model) {
-        // Should be handled better...
-        BankDto bankDto = bankService.findBankById(bankId).get();
+        ResultObj<BankDto> serviceResult = bankService.findBankById(bankId);
 
-        model.addAttribute("bank", bankDto);
-        model.addAttribute("accounts", bankDto.getAccounts());
+        if (serviceResult.getResult().equals(ResultObj.Result.ERROR) ||
+                serviceResult.getResult().equals(ResultObj.Result.VALIDATION) ||
+                serviceResult.getObject() == null) {
+            return "error-page";
+
+        }
+
+        model.addAttribute("bank", serviceResult.getObject());
+        model.addAttribute("accounts", serviceResult.getObject().getAccounts());
 
         return "bank-details";
     }
 
     @GetMapping("/bank/{bankId}/edit")
     public String getBankEdit(@PathVariable("bankId") long bankId, Model model) {
-        Optional<BankDto> bank = bankService.findBankById(bankId);
-        model.addAttribute("bank", bank.get());
+        ResultObj<BankDto> serviceResult = bankService.findBankById(bankId);
+        if (serviceResult.getResult().equals(ResultObj.Result.ERROR) ||
+                serviceResult.getResult().equals(ResultObj.Result.VALIDATION) ||
+                serviceResult.getObject() == null) {
+            return "error-page";
+
+        }
+
+        model.addAttribute("bank", serviceResult.getObject());
         return "bank-edit";
     }
 
     @PostMapping("/bank/{bankId}/edit")
-    public String getBankEdit(@Valid @ModelAttribute("bank") BankDto bank, BindingResult result) {
+    public String getBankEdit(@PathVariable("bankId") long bankId,
+                              @Valid @ModelAttribute("bank") BankDto bank,
+                              BindingResult result) {
         if (result.hasErrors()) {
             return "bank-edit";
         }
-        bankService.saveBank(bank);
+        ResultObj<Bank> serviceResult = bankService.editBank(bankId, bank);
+        if (serviceResult.getResult().equals(ResultObj.Result.ERROR)) {
+            return "error-page";
+
+        } else if (serviceResult.getResult().equals(ResultObj.Result.VALIDATION)) {
+            if (serviceResult.getValidation() == null) {
+                logger.error("Result type " + ResultObj.Result.VALIDATION + ", but no validation messages available. " + serviceResult);
+                return "error-page";
+            }
+            Validation validation = serviceResult.getValidation();
+            result.addError(new FieldError("bank", validation.getValue(), validation.getMessage()));
+            return "bank-edit";
+        }
         return "redirect:/banks";
     }
 
@@ -63,7 +103,7 @@ public class BankController {
         return "bank-new";
     }
 
-    @PostMapping("/acou/new")
+    @PostMapping("/bank/new")
     public String newBank(@Valid @ModelAttribute("bank") BankDto bank, BindingResult result) {
         if (result.hasErrors()) {
             return "bank-new";
@@ -74,7 +114,10 @@ public class BankController {
 
     @PostMapping("/bank/{bankId}/delete")
     public String deleteBank(@PathVariable("bankId") long bankId) {
-        bankService.deleteBankById(bankId);
+        ResultObj<Long> resultObj = bankService.deleteBankById(bankId);
+        if (resultObj.getResult().equals(ResultObj.Result.ERROR) || resultObj.getResult().equals(ResultObj.Result.VALIDATION)) {
+            return "error-page";
+        }
         return "redirect:/banks";
     }
 

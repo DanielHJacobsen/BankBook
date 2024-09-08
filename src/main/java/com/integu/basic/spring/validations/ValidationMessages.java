@@ -10,6 +10,7 @@ public class ValidationMessages {
 
     // TEMPLATES
     /** TYPE, ID **/
+    public static final String ID_OF_PATH_AND_BODY_DOES_NOT_MATCH = "The ID provided in the URL path (%s) and the JSON body (%s) does not match.";
     public static final String ITEM_DOES_NOT_EXIT = "The %s %s does not exist";
     public static final String NOT_ENOUGH_BALANCE_ON_ACCOUNT = "The account cannot transfer the request amount (%s) due to current balance (%s).";
 

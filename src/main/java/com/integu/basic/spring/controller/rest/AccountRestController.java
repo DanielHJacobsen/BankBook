@@ -30,6 +30,10 @@ public class AccountRestController {
         this.jsonWriter = mapper.writer().withDefaultPrettyPrinter();
     }
 
+    @GetMapping("/accounts/json")
+    public String getAccount() {
+        return parseResponseToJson(accountService.findAllAccounts());
+    }
 
     @GetMapping("/account/{accountId}/json")
     public String getAccount(@PathVariable("accountId") long accountId) {
@@ -37,10 +41,13 @@ public class AccountRestController {
     }
 
     @PostMapping("/account/{bankId}/new/json")
-    public String newAccount(@PathVariable("bankId") long bankId,
-                             @RequestBody AccountDto account) {
-
+    public String newAccount(@PathVariable("bankId") long bankId, @RequestBody AccountDto account) {
         return parseResponseToJson(accountService.saveAccount(bankId, account));
+    }
+
+    @PostMapping("/account/{accountId}/edit/json")
+    public String editAccount(@PathVariable("accountId") long accountId, @RequestBody AccountDto accountDto) {
+        return parseResponseToJson(accountService.editAccount(accountId, accountDto));
     }
 
     @PostMapping("/account/{accountId}/delete/json")

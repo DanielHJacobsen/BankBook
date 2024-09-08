@@ -1,11 +1,9 @@
 package com.integu.basic.spring.controller.mvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.integu.basic.spring.api.ResultObj;
 import com.integu.basic.spring.dto.AccountDto;
 import com.integu.basic.spring.dto.TransferDto;
 import com.integu.basic.spring.models.Account;
-import com.integu.basic.spring.models.Bank;
 import com.integu.basic.spring.services.AccountService;
 import com.integu.basic.spring.validations.Validation;
 import jakarta.validation.Valid;
@@ -17,13 +15,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 
 @Controller
 public class AccountController {
     private static final Logger logger = Logger.getLogger(AccountController.class.getName());
-
-    private final ObjectMapper mapper = new ObjectMapper();
 
     private final AccountService accountService;
 
@@ -42,36 +37,31 @@ public class AccountController {
 
         } else {
             // Type - Error
-            return "redirect:/banks";
+            return "error-page";
         }
     }
 
     @PostMapping("/account/{accountId}/edit")
-    public String getAccountEdit(@PathVariable("accountId") long accountId, @Valid @ModelAttribute("account") AccountDto account, BindingResult result) {
+    public String editAccount(@PathVariable("accountId") long accountId,
+                              @Valid @ModelAttribute("account") AccountDto accountDto,
+                              BindingResult result) {
         if (result.hasErrors()) {
             return "account-edit";
         }
-        ResultObj<AccountDto> serviceResult = accountService.findAccountById(accountId);
-        AccountDto accountDto = serviceResult.getObject();
-        if (serviceResult.getResult().equals(ResultObj.Result.SUCCESS) && accountDto != null) {
-            Bank bank = accountDto.getBank();
-            account.setBank(bank);
-            account.setCreated(accountDto.getCreated());
-            account.setModified(LocalDateTime.now());
-            accountService.saveAccount(bank.getId(), account);
+        ResultObj<AccountDto> serviceResult = accountService.editAccount(accountId, accountDto);
+        if (serviceResult.getResult().equals(ResultObj.Result.SUCCESS)) {
             return "redirect:/banks";
 
         } else if (serviceResult.getResult().equals(ResultObj.Result.VALIDATION)) {
             if (serviceResult.getValidation() == null) {
                 logger.error("Result type " + ResultObj.Result.VALIDATION + ", but no validation messages available. " + serviceResult);
-                return "redirect:/banks";
+                return "error-page";
             }
             Validation validation = serviceResult.getValidation();
             result.addError(new FieldError("transfer", validation.getValue(), validation.getMessage()));
             return "account-edit";
         } else {
-            // Type - Error
-            return "redirect:/banks";
+            return "error-page";
         }
     }
 
@@ -90,17 +80,28 @@ public class AccountController {
         if (result.hasErrors()) {
             return "account-new";
         }
-        accountService.saveAccount(bankId, account);
+        ResultObj<AccountDto> serviceResult = accountService.saveAccount(bankId, account);
+        if (serviceResult.getResult().equals(ResultObj.Result.ERROR)) {
+            return "error-page";
+        } else if (serviceResult.getResult().equals(ResultObj.Result.VALIDATION)) {
+            if (serviceResult.getValidation() == null) {
+                logger.error("Result type " + ResultObj.Result.VALIDATION + ", but no validation messages available. " + serviceResult);
+                return "error-page";
+            }
+            Validation validation = serviceResult.getValidation();
+            result.addError(new FieldError("transfer", validation.getValue(), validation.getMessage()));
+            return "account-new";
+        }
         return "redirect:/bank/" + bankId + "/details";
     }
 
     @PostMapping("/account/{accountId}/delete")
     public String deleteAccount(@PathVariable("accountId") long accountId) {
         ResultObj<Long> resultObj = accountService.deleteAccountById(accountId);
-        if (resultObj.getResult().equals(ResultObj.Result.ERROR)) {
+        if (resultObj.getResult().equals(ResultObj.Result.ERROR) || resultObj.getResult().equals(ResultObj.Result.VALIDATION)) {
             return "error-page";
         }
-        return "error-page";
+        return "redirect:/banks";
     }
 
     @GetMapping("/account/{accountId}/transfer")
@@ -116,13 +117,12 @@ public class AccountController {
             return "account-transfer";
 
         } else {
-            // Type - Error
-            return "redirect:/banks";
+            return "error-page";
         }
     }
 
     @PostMapping("/account/transfer")
-    public String getAccountTransfer(@ModelAttribute("account") AccountDto accountDto,
+    public String accountTransfer(@ModelAttribute("account") AccountDto accountDto,
                                      @Valid @ModelAttribute("transfer") TransferDto transferDto,
                                      BindingResult result) {
         if (result.hasErrors()) {
@@ -137,14 +137,13 @@ public class AccountController {
         } else if (serviceResult.getResult().equals(ResultObj.Result.VALIDATION)) {
             if (serviceResult.getValidation() == null) {
                 logger.error("Result type " + ResultObj.Result.VALIDATION + ", but no validation messages available. " + serviceResult);
-                return "redirect:/banks";
+                return "error-page";
             }
             Validation validation = serviceResult.getValidation();
             result.addError(new FieldError("transfer", validation.getValue(), validation.getMessage()));
             return "account-transfer";
         } else {
-            // Type - Error
-            return "redirect:/banks";
+            return "error-page";
         }
     }
 }
