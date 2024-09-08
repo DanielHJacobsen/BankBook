@@ -10,17 +10,23 @@ services:
       mysqldb:
         condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/basicspringapp
+      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3307/basicspringapp
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=1234567890
+      - spring.application.name=bankbook
+      - spring.datasource.url=jdbc:mysql://localhost:3307/basicspringapp
+      - spring.datasource.username=root
+      - spring.datasource.password=1234567890
+      - spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+      - spring.jpa.hibernate.ddl-auto=update
+      - spring.jpa.show-sql=true
     networks:
       - bankbook-network
   mysqldb:
     image: mysql:8.0.33
     ports:
-      - 3306:3306
+      - 3307:3307
     environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_ROOT_PASSWORD=1234567890
     volumes:
       - mysql-data:/var/lib/mysql
