@@ -1,24 +1,28 @@
 ## BankBook:
 - Author: Daniel H. Bjørnskov
-### Description
-write description here...
+
 ### How to start application:
 1. Clone project to local IDE.
-2. Pull and run a MySQL DB (Note that I changed exposed port to 3307.)
+2. Create an .env-file in the 'spring'-directory and provide API-key for exchange service. 
+Syntax: API_KEY={your_or_my_key_here} (see image below to 'copy' mine)
 
-```docker run -e MYSQL_ALLOW_EMPTY_PASSWORD=true -p 3306:3307 mysql:8.0.33```
+![image](documentation/exchange_api.jpg)
 
-* Note to self. Current MySql still requires manual creation of schema. Look into fixing this.
-
-3. Package Maven project with the project directory
+3. Build Jar with maven.
 
 ```mvn package```
 
-4. Run bankbook.jar from target-directory
+4. Start Docker Compose session from 'spring'-directory (Port 3306 and 8080 should be available on the executing environment.)
 
-```java -jar target\bankbook-0.0.1-SNAPSHOT.jar```
+```docker compose -f docker-compose.yml up --remove-orphans --detach```
 
-5. Open Postman (or similar API-testing tool) and use the following API (sorted by method GET/POST):
+5. Open a browser and navigate to localhost:8080.
+   Here you will find a simple HMI to navigate through the same API-interfaces as the REST-interface. (except for exchange API)
+   The image below show what you can expect to see.
+
+![image](documentation/bankbook.jpg)
+
+6. Open Postman (or similar API-testing tool) and use the following API (sorted by method GET/POST):
 
 - Bank
   - GET - Get all banks
@@ -112,9 +116,4 @@ write description here...
 Example image:
 ![image](documentation/Rest-API-demo.jpg)
 
-6. Open a browser and navigate to localhost:8080. 
-Here you will find a simple HMI to navigate through the same API-interfaces as the REST-interface. (except for exchange API)
-The image below show what you can expect to see. 
-
-![image](documentation/bankbook.jpg)
 

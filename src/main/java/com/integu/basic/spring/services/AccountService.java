@@ -3,14 +3,13 @@ package com.integu.basic.spring.services;
 import com.integu.basic.spring.api.ResultObj;
 import com.integu.basic.spring.dto.AccountDto;
 import com.integu.basic.spring.dto.TransferDto;
-import com.integu.basic.spring.models.Account;
 
 import java.util.List;
 
 public interface AccountService {
     ResultObj<List<AccountDto>> findAllAccounts();
 
-    ResultObj<AccountDto> saveAccount(long bankId, AccountDto accountDto);
+    ResultObj<AccountDto> newAccount(long bankId, AccountDto accountDto);
 
     ResultObj<AccountDto> findAccountById(long accountId);
 

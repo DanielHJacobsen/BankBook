@@ -13,7 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 
 @Controller
@@ -80,7 +83,7 @@ public class AccountController {
         if (result.hasErrors()) {
             return "account-new";
         }
-        ResultObj<AccountDto> serviceResult = accountService.saveAccount(bankId, account);
+        ResultObj<AccountDto> serviceResult = accountService.newAccount(bankId, account);
         if (serviceResult.getResult().equals(ResultObj.Result.ERROR)) {
             return "error-page";
         } else if (serviceResult.getResult().equals(ResultObj.Result.VALIDATION)) {

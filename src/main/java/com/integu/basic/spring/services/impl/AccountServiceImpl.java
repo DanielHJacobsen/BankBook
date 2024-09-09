@@ -47,12 +47,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ResultObj<AccountDto> saveAccount(long bankId, AccountDto accountDto) {
+    public ResultObj<AccountDto> newAccount(long bankId, AccountDto accountDto) {
         if (accountDto.getId() != null) {
             Validation validation = new Validation("accountId", String.format(UNEXPECTED_VALUE_ON_OPERATION, "id", "NEW ACCOUNT"));
             return new ResultObj<>(ResultObj.Result.VALIDATION, null, validation);
         }
+        return saveAccount(bankId, accountDto);
+    }
 
+    public ResultObj<AccountDto> saveAccount(long bankId, AccountDto accountDto) {
         Optional<BankDto> bank = bankService.findBankByIdInternal(bankId);
 
         Account account = mapToAccount(accountDto);

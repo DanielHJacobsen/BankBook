@@ -10,7 +10,7 @@
     <section layout:fragment="body" class="py-5 h-100">
         <div class="container">
 
-        <form role="form" method="post" th:action="@{/bank/${bankId}/edit(bankId=${bank.id})}" th:object="${bank}">
+        <form role="form" method="post" th:action="@{/bank/{bankId}/edit(bankId=${bank.id})}" th:object="${bank}">
             <input type="hidden" th:field="*{id}">
             <div class="form-row">
                 <div class="form-group col-md-6">

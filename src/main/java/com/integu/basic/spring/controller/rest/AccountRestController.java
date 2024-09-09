@@ -33,7 +33,7 @@ public class AccountRestController {
 
     @PostMapping("/account/{bankId}/new/json")
     public String newAccount(@PathVariable("bankId") long bankId, @RequestBody AccountDto account) {
-        return util.parseResponseToJson(accountService.saveAccount(bankId, account));
+        return util.parseResponseToJson(accountService.newAccount(bankId, account));
     }
 
     @PostMapping("/account/{accountId}/edit/json")
