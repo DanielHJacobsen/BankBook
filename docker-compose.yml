@@ -1,9 +1,10 @@
 version: '3.7'
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
+    image: danielhbjornskov/bankbook-app:1.0.0
     ports:
       - 8080:8080
     depends_on:

@@ -9,21 +9,17 @@ Syntax: API_KEY={your_or_my_key_here} (see image below to 'copy' mine)
 
 ![image](documentation/exchange_api.jpg)
 
-3. Build Jar with maven.
-
-```mvn package```
-
-4. Start Docker Compose session from 'spring'-directory.
+3. Start Docker Compose session from 'spring'-directory.
 
 ```docker compose -f docker-compose.yml up --remove-orphans --detach```
 
-5. Open a browser and navigate to localhost:8080.
+4. Open a browser and navigate to localhost:8080.
    Here you will find a simple HMI to navigate through the same API-interfaces as the REST-interface. (except for exchange API)
    The image below show what you can expect to see.
 
 ![image](documentation/bankbook.jpg)
 
-6. Open Postman (or similar API-testing tool) and use the following API (sorted by method GET/POST):
+5. Open Postman (or similar API-testing tool) and use the following API (sorted by method GET/POST):
 
 - Bank
   - GET - Get all banks
