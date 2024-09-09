@@ -2,6 +2,7 @@
 - Author: Daniel H. Bjørnskov
 
 ### How to start application:
+Prerequisite: Docker installed + port 3306 and 8080 should be available.
 1. Clone project to local IDE.
 2. Create an .env-file in the 'spring'-directory and provide API-key for exchange service. 
 Syntax: API_KEY={your_or_my_key_here} (see image below to 'copy' mine)
@@ -12,7 +13,7 @@ Syntax: API_KEY={your_or_my_key_here} (see image below to 'copy' mine)
 
 ```mvn package```
 
-4. Start Docker Compose session from 'spring'-directory (Port 3306 and 8080 should be available on the executing environment.)
+4. Start Docker Compose session from 'spring'-directory.
 
 ```docker compose -f docker-compose.yml up --remove-orphans --detach```
 
