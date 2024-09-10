@@ -2,7 +2,7 @@
 - Author: Daniel H. Bjørnskov
 
 ### How to start application:
-Prerequisite: Docker + Java 22 (maven build of jar) installed + port 3306 and 8080 should be available.
+Prerequisite: Docker installed + port 3306 and 8080 should be available.
 1. Clone project to local IDE.
 2. Create an .env-file in the 'spring'-directory and provide API-key for exchange service. 
 Syntax: API_KEY={your_or_my_key_here} (see image below to 'copy' mine)
