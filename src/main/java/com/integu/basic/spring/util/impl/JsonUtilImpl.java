@@ -8,6 +8,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.integu.basic.spring.api.ResultObj;
 import com.integu.basic.spring.util.JsonUtil;
 import org.apache.log4j.Logger;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import static com.integu.basic.spring.validations.ValidationMessages.DEFAULT_SERVER_ERROR;
@@ -26,12 +28,16 @@ public class JsonUtilImpl implements JsonUtil {
         this.jsonWriter = mapper.writer().withDefaultPrettyPrinter();
     }
 
-    public String parseResponseToJson(ResultObj<?> resultObj) {
+    public ResponseEntity<String> parseResponseToJson(ResultObj<?> resultObj) {
         try {
-            return this.jsonWriter.writeValueAsString(resultObj);
+            if (resultObj.getResult().equals(ResultObj.Result.SUCCESS)) {
+                return new ResponseEntity<>(this.jsonWriter.writeValueAsString(resultObj.getObject()), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(this.jsonWriter.writeValueAsString(resultObj.getObject()), HttpStatus.FORBIDDEN);
+            }
         } catch (JsonProcessingException e) {
             logger.error(FALLBACK_JSON_ERROR, e);
-            return FALLBACK_JSON_ERROR;
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

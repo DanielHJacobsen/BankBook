@@ -4,6 +4,7 @@ import com.integu.basic.spring.services.ExchangeService;
 import com.integu.basic.spring.util.JsonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,7 @@ public class ExchangeRestController {
     }
 
     @GetMapping("/exchange/{currencyShortName}/json")
-    public Mono<String> getExchange(@PathVariable("currencyShortName") String currencyShortName) {
+    public Mono<ResponseEntity<String>> getExchange(@PathVariable("currencyShortName") String currencyShortName) {
         return exchangeService.fetchCurrencyData(currencyShortName).map(util::parseResponseToJson);
     }
 }

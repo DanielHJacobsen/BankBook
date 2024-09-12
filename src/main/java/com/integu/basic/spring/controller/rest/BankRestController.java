@@ -5,6 +5,7 @@ import com.integu.basic.spring.services.BankService;
 import com.integu.basic.spring.util.JsonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,27 +21,27 @@ public class BankRestController {
     }
 
     @GetMapping("/banks/json")
-    public String getBank() {
+    public ResponseEntity<String> getBank() {
         return util.parseResponseToJson(bankService.findAllBanks());
     }
 
     @GetMapping("/bank/{bankId}/json")
-    public String getBank(@PathVariable("bankId") long bankId) {
+    public ResponseEntity<String> getBank(@PathVariable("bankId") long bankId) {
         return util.parseResponseToJson(bankService.findBankById(bankId));
     }
 
     @PostMapping("/bank/new/json")
-    public String newBank(@RequestBody BankDto bank) {
+    public ResponseEntity<String> newBank(@RequestBody BankDto bank) {
         return util.parseResponseToJson(bankService.saveBank(bank));
     }
 
     @PostMapping("/bank/{bankId}/edit/json")
-    public String editBank(@PathVariable("bankId") long bankId, @RequestBody BankDto bankDto) {
+    public ResponseEntity<String> editBank(@PathVariable("bankId") long bankId, @RequestBody BankDto bankDto) {
         return util.parseResponseToJson(bankService.editBank(bankId, bankDto));
     }
 
     @PostMapping("/bank/{bankId}/delete/json")
-    public String deleteBank(@PathVariable("bankId") long bankId) {
+    public ResponseEntity<String> deleteBank(@PathVariable("bankId") long bankId) {
         return util.parseResponseToJson(bankService.deleteBankById(bankId));
     }
 }

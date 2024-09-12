@@ -6,6 +6,7 @@ import com.integu.basic.spring.services.AccountService;
 import com.integu.basic.spring.util.JsonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,32 +23,32 @@ public class AccountRestController {
     }
 
     @GetMapping("/accounts/json")
-    public String getAccount() {
+    public ResponseEntity<String> getAccount() {
         return util.parseResponseToJson(accountService.findAllAccounts());
     }
 
     @GetMapping("/account/{accountId}/json")
-    public String getAccount(@PathVariable("accountId") long accountId) {
+    public ResponseEntity<String> getAccount(@PathVariable("accountId") long accountId) {
         return util.parseResponseToJson(accountService.findAccountById(accountId));
     }
 
     @PostMapping("/account/{bankId}/new/json")
-    public String newAccount(@PathVariable("bankId") long bankId, @RequestBody AccountDto account) {
+    public ResponseEntity<String> newAccount(@PathVariable("bankId") long bankId, @RequestBody AccountDto account) {
         return util.parseResponseToJson(accountService.newAccount(bankId, account));
     }
 
     @PostMapping("/account/{accountId}/edit/json")
-    public String editAccount(@PathVariable("accountId") long accountId, @RequestBody AccountDto accountDto) {
+    public ResponseEntity<String> editAccount(@PathVariable("accountId") long accountId, @RequestBody AccountDto accountDto) {
         return util.parseResponseToJson(accountService.editAccount(accountId, accountDto));
     }
 
     @PostMapping("/account/{accountId}/delete/json")
-    public String deleteAccount(@PathVariable("accountId") long accountId) {
+    public ResponseEntity<String> deleteAccount(@PathVariable("accountId") long accountId) {
         return util.parseResponseToJson(accountService.deleteAccountById(accountId));
     }
 
     @PostMapping(value = "/account/transfer/json", consumes = "application/json")
-    public String getAccountTransferJson(@RequestBody TransferDto transferDto) {
+    public ResponseEntity<String> getAccountTransferJson(@RequestBody TransferDto transferDto) {
         return util.parseResponseToJson(accountService.transferFromAccountToAccount(transferDto));
     }
 }
